@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Weather analytics system", "Weather analytics system\Weather analytics system.csproj", "{E4BDB066-DF3B-4118-AF39-86822ACEB39F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Weather_analytics_system", "Weather_analytics_system\Weather_analytics_system.csproj", "{E4BDB066-DF3B-4118-AF39-86822ACEB39F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
