@@ -1,0 +1,1 @@
+﻿document.querySelectorAll(".mvc-grid").forEach(element => new MvcGrid(element));
