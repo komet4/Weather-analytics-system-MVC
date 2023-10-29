@@ -1,0 +1,66 @@
+@{
+    ViewData["Title"] = "Weather filter";
+    @model WeatherAnalyticsSystem.ViewModels.WeatherViewModel;
+}
+
+<div class="text-center">
+    <h1>@ViewData["Title"]</h1>
+</div>
+@(Html
+    .Grid(Model.weathersList)
+    .Css("table-hover")
+    .Build(c => {
+        c.Add(w => Html.CheckBox("Check_" + w.Id)).Titled(Html.CheckBox("CheckAll"));
+        c.Add(w => w.Id).Titled("ID");
+        c.Add(w => w.City).Titled("City");
+        c.Add(w => w.Main.Temp).Titled("Temp");
+        c.Add(w => w.Main.Temp_max).Titled("Temp max");
+        c.Add(w => w.Main.Temp_min).Titled("Temp min");
+        c.Add(w => Model.ConvertUnixTimeToDateTime(w.DateTime)).Titled("Date Time").Formatted("{0:dd.MM.yyyy HH:mm}");
+        c.Add(w => w.Coord.Latitude).Titled("Latitude");
+        c.Add(w => w.Coord.Longitude).Titled("Longitude");
+        c.Add(w => w.Sys.Country).Titled("Country");
+    })
+    .Using(GridFilterMode.Header)
+    .Empty("No data found")
+    .Filterable() // Фильтрация
+    .Sortable() // Сортировка
+    .Pageable() //Нумерация страниц
+)
+
+<script>
+//Подсвечивание строки где последняя температура выше средних значений за последний час
+var avgTemps = @Html.Raw(Json.Serialize(Model.AvgTemp)); // Сериализация объекта средней температуры городов за последний час
+var rows = document.querySelectorAll("tbody tr"); // Все строки внутри тега <body> в rows
+rows.forEach(function(row) {
+    var cells = row.querySelectorAll("td"); // Все ячейки внутри строки в cells
+    var city = cells[2].innerText; // Текст из третьей ячейки (название города)
+    var lastTemp = parseFloat(cells[3].innerText.replace(",", ".")); // Последняя температуры из четвертой ячейки и замена "," на "."
+    if (lastTemp > avgTemps[city]) {
+        row.classList.add("highlight"); // Подсвечивание всей строки (класс .highlight находится в ~/wwwroot/css/site.css)
+    }
+});
+
+// Подсвечивание всех строк
+document.getElementById("CheckAll").addEventListener("change", function () {
+    document.querySelectorAll("[id^='Check_']").forEach(checkbox => {
+        checkbox.checked = this.checked;
+        if (checkbox.checked) {
+            checkbox.parentElement.parentElement.classList.add("highlight");
+        } else {
+            checkbox.parentElement.parentElement.classList.remove("highlight");
+        }
+    });
+});
+
+// Подсвечивание выбранной строки
+document.querySelectorAll("[id^='Check_']").forEach(checkbox => {
+    checkbox.addEventListener("change", function () {
+        if (this.checked) {
+            this.parentElement.parentElement.classList.add("highlight");
+        } else {
+            this.parentElement.parentElement.classList.remove("highlight");
+        }
+    });
+});
+</script>

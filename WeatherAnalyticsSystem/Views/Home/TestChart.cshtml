@@ -1,0 +1,72 @@
+@{
+    ViewData["Title"] = "Test line chart";
+    @model WeatherAnalyticsSystem.ViewModels.WeatherViewModel;
+}
+
+<div class="text-center">
+    <h1>@ViewData["Title"]</h1>
+    <canvas id="myChart" width="800" height="400"></canvas>
+</div>
+
+<script>
+var ctx = document.getElementById('myChart').getContext('2d');
+var data = [];
+var colorList = ["red", "blue", "green", "yellow", "purple", "orange", "brown", "pink", "grey", "cyan"];
+var index = 0;
+// Цикл по всем уникальным городам для записи всех значений температур и времени замера в data
+@foreach (var cityTempTime in Model.CitiesTempTime)
+{
+<text>
+    var cityData = {
+        label: '@cityTempTime.Key',
+        data: [@Html.Raw(string.Join(",", cityTempTime.Value.Select(x => "{x: '" + Model.ConvertUnixTimeToDateTime(x.Item2).ToString("HH") + "', y:" + x.Item1.ToString().Replace(',', '.') + "}")))],
+        fill: false,
+        borderColor: colorList[index],
+        backgroundColor: colorList[index],
+        borderWidth: 1
+    };
+    data.push(cityData);
+    index++;
+    </text>
+}
+// Настройка линейного графика
+var myChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+        datasets: data
+    },
+    options: {
+        responsive: true,
+        title: {
+            display: true,
+            text: 'Temperature Chart'
+        },
+        scales: {
+            xAxes: [{
+                type: 'time',
+                time: {
+                    unit: 'hour',
+                    displayFormats: {
+                        hour: 'HH'
+                    }
+                },
+                title: {
+                    display: true,
+                    text: 'Time'
+                }
+            }],
+            yAxes: [{
+                ticks: {
+                    beginAtZero: false
+                },
+                title: {
+                    display: true,
+                    text: 'Temperature'
+                }
+            }]
+        }
+    }
+});
+</script>
+
+
